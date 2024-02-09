@@ -37,13 +37,13 @@ router.post("/", async (req, res, next) => {
     console.log(req.user);
     const orders = await prisma.orders.create({
       data: {
-        userid: 1,
+        userid: 1 //hardcoded in need login/register to be done  //req.body
       },
     });
     const orderDetails =await prisma.orderdetails.create({
         data: {
             orderid:orders.id,
-            productid:2
+            productid:2 //hardcoded in  //req.body
           },
     })
     let obj={
@@ -55,5 +55,6 @@ router.post("/", async (req, res, next) => {
     next(error);
   }
 });
+
 
 module.exports = router;
