@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,4 +5,39 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model orderdetails {
+  id        Int       @id @default(autoincrement())
+  productid Int?
+  orderid   Int?
+  orders    orders?   @relation(fields: [orderid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  products  products? @relation(fields: [productid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model orders {
+  id           Int            @id @default(autoincrement())
+  createdat    DateTime?      @default(dbgenerated("CURRENT_DATE")) @db.Date
+  userid       Int?
+  orderdetails orderdetails[]
+  users        users?         @relation(fields: [userid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model products {
+  id           Int            @id @default(autoincrement())
+  name         String         @db.VarChar(255)
+  url          String         @db.VarChar(255)
+  description  String         @db.VarChar(255)
+  price        Float
+  orderdetails orderdetails[]
+}
+
+model users {
+  id        Int      @id @default(autoincrement())
+  firstname String   @db.VarChar(255)
+  lastname  String   @db.VarChar(255)
+  email     String   @unique @db.VarChar(255)
+  password  String   @db.VarChar(255)
+  isadmin   Boolean? @default(false)
+  orders    orders[]
 }
