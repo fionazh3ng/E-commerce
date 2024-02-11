@@ -1,12 +1,12 @@
 // const prismaClient = require("@prisma/client");
 // const prisma = new prismaClient();
 const { Client } = require("pg");
-const {product,descriptions, prices, url}=require("./index.js")
+const { product, descriptions, prices, url } = require("./index.js");
 
 const client = new Client({
   connectionString:
     process.env.DATABASE_URL ||
-    "postgresql://qiao@localhost:5432/ecommerce?schema=public",
+    "postgresql://fionazh3ng@localhost:5432/ecommerce?schema=public",
   ssl:
     process.env.NODE_ENV === "production"
       ? { rejectUnauthorized: false }
@@ -128,13 +128,13 @@ async function createInitialProducts() {
     //   price: 400,
     // });
 
-    for(let i=0;i<48;i++){
-        await createProduct({
-            name:product[i],
-            url: url,
-            description:descriptions[i],
-            price:prices[i]
-        })
+    for (let i = 0; i < 48; i++) {
+      await createProduct({
+        name: product[i],
+        url: url,
+        description: descriptions[i],
+        price: prices[i],
+      });
     }
 
     console.log("Finished creating products!");
@@ -171,15 +171,15 @@ async function createInitialOrderDetails() {
 
     await createOrderDetails({
       productId: 1,
-      orderId:1
+      orderId: 1,
     });
     await createOrderDetails({
       productId: 1,
-      orderId:2
+      orderId: 2,
     });
     await createOrderDetails({
       productId: 1,
-      orderId:3
+      orderId: 3,
     });
 
     console.log("Finished creating orderDetails!");
@@ -273,7 +273,7 @@ async function rebuildDB() {
     await createInitialUsers();
     await createInitialProducts();
     await createInitialOrders();
-    await createInitialOrderDetails()
+    await createInitialOrderDetails();
   } catch (error) {
     console.log("Error during rebuildDB");
     throw error;

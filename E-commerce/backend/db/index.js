@@ -113,4 +113,4 @@ const prices = [
 const url =
   "https://www.creativefabrica.com/wp-content/uploads/2021/04/28/Work-In-Progress-Rubber-Stamp-Vector-Graphics-11432494-1.jpg";
 
-  module.exports={product,descriptions,prices,url}
+module.exports = { product, descriptions, prices, url };
