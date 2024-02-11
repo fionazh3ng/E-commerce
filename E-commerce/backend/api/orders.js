@@ -5,56 +5,139 @@ const router = require("express").Router();
 
 // router.use((req, res, next) => {
 //     if (!req.user) {
-//       return res.status(401).send("You must be logged in to do that.");
+//       return res.status(200).send("You must be logged in to do that.");
 //     }
 //     next();
 //   });
 
-router.get("/", async (req, res, next) => {
-  try {
-    const orders = await prisma.orders.findMany();
-    res.send(orders);
-  } catch (error) {
-    next(error);
-  }
-});
 
-router.get("/:id", async (req, res, next) => {
+// admin can view any customers/admin orders based on the input id
+router.post("/customer", async (req, res, next) => {
   try {
-    const orders = await prisma.orders.findFirst({
+    if (!req.user) {
+      return res.send("Need to login");
+    }
+    const user = await prisma.users.findFirst({
       where: {
-        id: Number(req.params.id),
+        id: req.user.id,
       },
     });
-    res.send(orders);
+    if (!user.isadmin) {
+      return res.send("Not an admin");
+    }
+    //find all orders based on the id admin is checking, looking into order table with reference to user id
+    const orders = await prisma.orders.findMany({
+      where: {
+        userid: req.body.id,
+      },
+    });
+    //find all order details of the order, looking into orderdetails table with reference to order id
+    const results = [];
+    for (let order of orders) {
+      const orderdetails = await prisma.orderdetails.findMany({
+        where: {
+          orderid: order.id,
+        },
+      });
+      results.push({ order, orderdetails });
+    }
+    //find all product description of order details, looking into products table with reference to orderdetails product id
+    const array = [];
+    for (let order of results) {
+      const productInfo = [];
+      for (let orders of order.orderdetails) {
+        productInfo.push({
+          ...orders,
+          productDescription: await prisma.products.findFirst({
+            where: {
+              id: orders.productid,
+            },
+          }),
+        });
+      }
+      array.push({ ...order.order, productInfo });
+    }
+
+    res.send(array);
   } catch (error) {
     next(error);
   }
 });
 
+//the current user can view their orders
+router.get("/customer", async (req, res, next) => {
+  //get all orders for specific person who is logged in admin/customer
+  try {
+    if (!req.user) {
+      return res.send("Need to login");
+    }
+    //get all orders of user, looks into order table with reference to user id
+    const orders = await prisma.orders.findMany({
+      where: {
+        userid: 2, //req.user.id
+      },
+    });
+    //get all order details of each order, looks into orderdetails table with reference to order id
+    const results = [];
+    for (let order of orders) {
+      const orderdetails = await prisma.orderdetails.findMany({
+        where: {
+          orderid: order.id,
+        },
+      });
+      results.push({ order, orderdetails });
+    }
+    //get all product descriptions of each order details for each order, looks into product table with reference to orderdetails product id
+    const array = [];
+    for (let order of results) {
+      const productInfo = [];
+      for (let orders of order.orderdetails) {
+        productInfo.push({
+          ...orders,
+          productDescription: await prisma.products.findFirst({
+            where: {
+              id: orders.productid,
+            },
+          }),
+        });
+      }
+      array.push({ ...order.order, productInfo });
+    }
+
+    res.send(array);
+  } catch (error) {
+    next(error);
+  }
+});
+
+//create an order
 router.post("/", async (req, res, next) => {
   try {
-    console.log(req.user);
+    if (!req.user) {
+      return res.send("Need to login");
+    }
+    //create an order to get the order number to add into each order item
     const orders = await prisma.orders.create({
       data: {
-        userid: 1 //hardcoded in need login/register to be done  //req.body
+        userid: 2, //hardcoded in need login/register to be done  //req.user.id
       },
     });
-    const orderDetails =await prisma.orderdetails.create({
-        data: {
-            orderid:orders.id,
-            productid:2 //hardcoded in  //req.body
-          },
-    })
-    let obj={
-        orderid:orders.id,
-        productItems: orderDetails.productid
+    //extract the items from the req
+    const { products } = req.body;
+    const array = [];
+    //loop through each item and add the orderid
+    for (let x of products) {
+      array.push({ ...x, orderid: orders.id });
     }
-    res.send(obj);
+    //add all the items into the orderdetails table
+    const orderDetails = await prisma.orderdetails.createMany({
+      data: array,
+    });
+
+    res.send({ orders, orderDetails });
   } catch (error) {
     next(error);
   }
 });
-
 
 module.exports = router;
