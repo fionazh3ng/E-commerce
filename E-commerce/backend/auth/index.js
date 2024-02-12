@@ -43,43 +43,43 @@ router.post("/register", async (req, res, next) => {
   }
 });
 
-// // login to an existing account
-// router.post("/login", async (req, res, next) => {
-//   try {
-//     const user = await prisma.users.findFirst({
-//       where: {
-//         email: req.body.email,
-//       },
-//     });
+// login to an existing account
+router.post("/login", async (req, res, next) => {
+  try {
+    const user = await prisma.users.findFirst({
+      where: {
+        email: req.body.email,
+      },
+    });
 
-//     const match = await bcrypt.compare(req.body.password, user?.password);
+    const match = await bcrypt.compare(req.body.password, user?.password);
 
-//     if (!match) {
-//       res.status(401).send("Invalid login credentials.");
-//     }
+    if (!match) {
+      res.status(401).send("Invalid login credentials.");
+    }
 
-//     const token = jwt.sign({ id: user.id }, process.env.JWT, {
-//       expiresIn: "1h",
-//     });
-//     res.send({ token });
-//   } catch (error) {
-//     next(error);
-//   }
-// });
+    const token = jwt.sign({ id: user.id }, process.env.JWT, {
+      expiresIn: "1h",
+    });
+    res.send(token);
+  } catch (error) {
+    next(error);
+  }
+});
 
-// // Get the currently logged in user
-// router.get("/me", async (req, res, next) => {
-//   try {
-//     const user = await prisma.users.findFirst({
-//       where: {
-//         id: Number(req.params.id),
-//       },
-//     });
+// Get the currently logged in user
+router.get("/me", async (req, res, next) => {
+  try {
+    const user = await prisma.users.findFirst({
+      where: {
+        id: Number(req.params.id),
+      },
+    });
 
-//     res.send(user);
-//   } catch (error) {
-//     next(error);
-//   }
-// });
+    res.send(user);
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = router;
