@@ -17,10 +17,12 @@ async function dropTables() {
   try {
     console.log("Starting to drop tables...");
     await client.query(`
+        DROP TABLE IF EXISTS cart;
         DROP TABLE IF EXISTS orderDetails;
         DROP TABLE IF EXISTS orders;
         DROP TABLE IF EXISTS products;
         DROP TABLE IF EXISTS users;
+        
       `);
 
     console.log("Finished dropping tables!");
@@ -61,6 +63,12 @@ async function createTables() {
             id SERIAL PRIMARY KEY,
             productId INTEGER REFERENCES products(id),
             orderId INTEGER REFERENCES orders(id)
+          );
+
+          CREATE TABLE cart (
+            id SERIAL PRIMARY KEY,
+            productId INTEGER REFERENCES products(id),
+            userId INTEGER REFERENCES users(id)
           );
 
       `);
@@ -108,25 +116,6 @@ async function createInitialUsers() {
 async function createInitialProducts() {
   try {
     console.log("Starting to create products...");
-
-    // await createProduct({
-    //   name: "iphone",
-    //   url: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-card-40-iphone15prohero-202309_FMT_WHH?wid=508&hei=472&fmt=p-jpg&qlt=95&.v=1693086369818",
-    //   description: "a phone made by apple",
-    //   price: 600,
-    // });
-    // await createProduct({
-    //   name: "laptop",
-    //   url: "https://m.media-amazon.com/images/I/71sgAr9atBS._AC_UF894,1000_QL80_.jpg",
-    //   description: "a gaming laptop",
-    //   price: 1200,
-    // });
-    // await createProduct({
-    //   name: "TV",
-    //   url: "https://cdn.thewirecutter.com/wp-content/media/2023/09/lcdledtv-2048px-tclQM8-2109-2x1-1.jpg?auto=webp&quality=75&crop=2:1&width=1024",
-    //   description: "a flat screen tv",
-    //   price: 400,
-    // });
 
     for (let i = 0; i < 48; i++) {
       await createProduct({
@@ -191,6 +180,37 @@ async function createInitialOrderDetails() {
     console.log("Finished creating orderDetails!");
   } catch (error) {
     console.error("Error creating orderDetails!");
+    throw error;
+  }
+}
+
+async function createInitialCart() {
+  try {
+    console.log("Starting to create cart...");
+
+    await createCart({
+      productId: 1,
+      userid: 1,
+    });
+
+    await createCart({
+      productId: 2,
+      userid: 1,
+    });
+
+    await createCart({
+      productId: 3,
+      userid: 1,
+    });
+
+   await createCart({
+      productId: 4,
+      userid: 1,
+    });
+
+    console.log("Finished creating cart!");
+  } catch (error) {
+    console.error("Error creating cart!");
     throw error;
   }
 }
@@ -271,6 +291,25 @@ async function createOrderDetails({ productId, orderId }) {
   }
 }
 
+async function createCart({ productId, userid }) {
+  try {
+    const {
+      rows: [cart],
+    } = await client.query(
+      `
+        INSERT INTO cart(productId, userid)
+        VALUES($1, $2) 
+        RETURNING *;
+      `,
+      [productId, userid]
+    );
+
+    return cart;
+  } catch (error) {
+    throw error;
+  }
+}
+
 async function rebuildDB() {
   try {
     client.connect();
@@ -280,6 +319,7 @@ async function rebuildDB() {
     await createInitialProducts();
     await createInitialOrders();
     await createInitialOrderDetails();
+    await createInitialCart()
   } catch (error) {
     console.log("Error during rebuildDB");
     throw error;

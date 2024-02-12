@@ -29,6 +29,7 @@ model products {
   url          String         @db.VarChar(255)
   description  String         @db.VarChar(255)
   price        Float
+  cart         cart[]
   orderdetails orderdetails[]
 }
 
@@ -39,5 +40,14 @@ model users {
   email     String   @unique @db.VarChar(255)
   password  String   @db.VarChar(255)
   isadmin   Boolean? @default(false)
+  cart      cart[]
   orders    orders[]
+}
+
+model cart {
+  id        Int       @id @default(autoincrement())
+  productid Int?
+  userid    Int?
+  products  products? @relation(fields: [productid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users     users?    @relation(fields: [userid], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }

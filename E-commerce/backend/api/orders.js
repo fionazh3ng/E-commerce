@@ -133,6 +133,12 @@ router.post("/", async (req, res, next) => {
     const orderDetails = await prisma.orderdetails.createMany({
       data: array,
     });
+    
+    await prisma.cart.deleteMany({
+      where:{
+        userid:req.user.id
+      }
+    })
 
     res.send({ orders, orderDetails });
   } catch (error) {
