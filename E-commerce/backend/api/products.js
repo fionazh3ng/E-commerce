@@ -67,20 +67,20 @@ router.put("/:id", async (req, res, next) => {
 });
 
 // Delete product
-// router.put("/:id", async (req, res, next) => {
-//   try {
-//     const product = await prisma.products.delete({
-//       where: {
-//         id: Number(req.params.id),
-//       },
-//     });
-//     if (!product) {
-//       return res.status(404).send("product not found.");
-//     }
-//     res.send(product);
-//   } catch (error) {
-//     next(error);
-//   }
-// });
+router.delete("/:id", async (req, res, next) => {
+  try {
+    const product = await prisma.products.delete({
+      where: {
+        id: Number(req.params.id),
+      },
+    });
+    if (!product) {
+      return res.status(404).send("product not found.");
+    }
+    res.send(product);
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = router;

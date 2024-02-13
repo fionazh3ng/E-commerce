@@ -4,12 +4,13 @@ const prisma = new PrismaClient();
 const router = require("express").Router();
 
 // Deny access if user is not logged in
-// router.use((req, res, next) => {
-//   if (!req.user) {
-//     return res.status(401).send("You must be logged in to do that.");
-//   }
-//   next();
-// });
+router.use((req, res, next) => {
+  // header, authorization, token
+  if (!req.user) {
+    return res.status(401).send("You must be logged in to do that.");
+  }
+  next();
+});
 
 // Get all users
 router.get("/", async (req, res, next) => {

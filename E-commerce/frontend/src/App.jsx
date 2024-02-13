@@ -1,4 +1,5 @@
-import "./App.css";
+import { useGetUsersQuery, useGetUserQuery } from "../redux/api";
+import { useSelector } from "react-redux";
 
 function App() {
   return (
