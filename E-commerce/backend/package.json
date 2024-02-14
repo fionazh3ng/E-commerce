@@ -18,7 +18,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed": "node db/seed.js",
-    "server": "nodemon app.js"
+    "server": "nodemon app.js",
+    "start": "react-scripts start"
   },
   "keywords": [],
   "author": "",
