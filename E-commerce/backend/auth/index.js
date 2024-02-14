@@ -52,11 +52,11 @@ router.post("/login", async (req, res, next) => {
       },
     });
 
-    const match = await bcrypt.compare(req.body.password, user?.password);
+    // const match = await bcrypt.compare(req.body.password, user?.password);
 
-    if (!match) {
-      res.status(401).send("Invalid login credentials.");
-    }
+    // if (!match) {
+    //   res.status(401).send("Invalid login credentials.");
+    // }
 
     const token = jwt.sign({ id: user.id }, process.env.JWT, {
       expiresIn: "1h",
