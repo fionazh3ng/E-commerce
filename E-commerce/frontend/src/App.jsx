@@ -1,11 +1,15 @@
-import { useGetUsersQuery, useGetUserQuery } from "../redux/api";
-import { useSelector } from "react-redux";
+import React from "react";
+import Users from "../components/Users";
+import SingleUser from "../components/SingleUser";
 
 function App() {
   return (
-    <>
-      <h1>hiiii</h1>
-    </>
+    <div className="App">
+      <Routes>
+        <Route path="/" element={<Users />}></Route>
+        <Route path="/users/:id" element={<SingleUser />}></Route>
+      </Routes>
+    </div>
   );
 }
 
