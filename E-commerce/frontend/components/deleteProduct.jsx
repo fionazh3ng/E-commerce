@@ -1,7 +1,7 @@
-import React from 'react';
-import { useDispatch } from 'react-redux';
-import { useMutation } from '@reduxjs/toolkit/query/react';
-import { deleteProduct } from '../api/productApi';
+import React from "react";
+import { useDispatch } from "react-redux";
+import { useMutation } from "@reduxjs/toolkit/query/react";
+import { deleteProduct } from "../api/productApi";
 
 const DeleteProduct = ({ productId }) => {
   const dispatch = useDispatch();
@@ -9,6 +9,7 @@ const DeleteProduct = ({ productId }) => {
   const [mutate, { isLoading, isError }] = useMutation(deleteProduct);
 
   const handleDelete = () => {
+    console.log("Deleting product...");
     dispatch(mutate(productId));
   };
 

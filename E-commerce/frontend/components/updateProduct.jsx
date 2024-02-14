@@ -14,6 +14,7 @@ const UpdateProduct = ({ product }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log("Submitting updated product:", formData); // Adding console.log here
     dispatch(updateProduct(formData));
   };
 

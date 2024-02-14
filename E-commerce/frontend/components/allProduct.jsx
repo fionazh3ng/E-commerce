@@ -4,6 +4,8 @@ import SingleProduct from "./singleProduct";
 const AppProduct = () => {
   const productId = "exampleProductId";
 
+  console.log("Rendering AppProduct component");
+
   return (
     <div>
       <h1>Product Details</h1>
