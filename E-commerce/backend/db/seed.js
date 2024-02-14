@@ -6,7 +6,7 @@ const { product, descriptions, prices, url } = require("./index.js");
 const client = new Client({
   connectionString:
     process.env.DATABASE_URL ||
-    "postgresql://fionazh3ng@localhost:5432/ecommerce?schema=public",
+    "postgresql://newuser\\@localhost:5432/ecommerce?schema=public",
   ssl:
     process.env.NODE_ENV === "production"
       ? { rejectUnauthorized: false }
@@ -203,7 +203,7 @@ async function createInitialCart() {
       userid: 1,
     });
 
-   await createCart({
+    await createCart({
       productId: 4,
       userid: 1,
     });
@@ -319,7 +319,7 @@ async function rebuildDB() {
     await createInitialProducts();
     await createInitialOrders();
     await createInitialOrderDetails();
-    await createInitialCart()
+    await createInitialCart();
   } catch (error) {
     console.log("Error during rebuildDB");
     throw error;
