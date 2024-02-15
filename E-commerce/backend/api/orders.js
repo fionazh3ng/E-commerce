@@ -3,7 +3,6 @@ const { product } = require("../db");
 const prisma = new PrismaClient();
 const router = require("express").Router();
 
-
 // admin can view any customers/admin orders based on the input id
 router.post("/customer", async (req, res, next) => {
   try {
@@ -115,19 +114,22 @@ router.post("/", async (req, res, next) => {
         userid: req.user.id, //hardcoded in need login/register to be done  //req.user.id
       },
     });
-    //extract the items from the req
-    const { products } = req.body;
-    const array = [];
+    const cart = await prisma.cart.findMany({
+      where: {
+        userid: req.user.id,
+      },
+    });
+    let array = [];
     //loop through each item and add the orderid
-    for (let x of products) {
-      array.push({ ...x, orderid: orders.id });
-    }
+    for (let x of cart)
+      array.push({ productid: x.productid, orderid: orders.id });
     //add all the items into the orderdetails table
     const orderDetails = await prisma.orderdetails.createMany({
       data: array,
     });
 
-    await prisma.cart.deleteMany({ //once checkout is called, delete cart
+    await prisma.cart.deleteMany({
+      //once checkout is called, delete cart
       where: {
         userid: req.user.id,
       },

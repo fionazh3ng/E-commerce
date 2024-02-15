@@ -29,15 +29,12 @@ export const ordersApi = createApi({
       }),
     }),
     createOrder: builder.mutation({
-      query: ({ products, token }) => ({
+      query: ({ token }) => ({
         url: "/",
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
-        },
-        body: {
-          products,
         },
       }),
     }),
