@@ -1,19 +1,20 @@
+// getProducts.js
+const express = require("express");
+const router = express.Router();
 const { PrismaClient } = require("@prisma/client");
-const { product } = require("../db");
 const prisma = new PrismaClient();
-const router = require("express").Router();
 
-// Get all products
 router.get("/", async (req, res, next) => {
   try {
     const products = await prisma.products.findMany();
-    res.send(products);
+    res.json(products);
   } catch (error) {
     next(error);
   }
 });
 
-// Get product by id
+// getProductById.js
+
 router.get("/:id", async (req, res, next) => {
   try {
     const product = await prisma.products.findFirst({
@@ -21,13 +22,18 @@ router.get("/:id", async (req, res, next) => {
         id: Number(req.params.id),
       },
     });
-    res.send(product);
+    if (!product) {
+      res.status(404).json({ error: "Product not found" });
+    } else {
+      res.json(product);
+    }
   } catch (error) {
     next(error);
   }
 });
 
-// create new product
+// createProduct.js
+
 router.post("/", async (req, res, next) => {
   try {
     const { name, url, description, price } = req.body;
@@ -39,13 +45,14 @@ router.post("/", async (req, res, next) => {
         price,
       },
     });
-    res.status(201).send(product);
+    res.status(201).json(product);
   } catch (error) {
     next(error);
   }
 });
 
-// Update product
+// updateProduct.js
+
 router.put("/:id", async (req, res, next) => {
   try {
     const { name, url, description, price } = req.body;
@@ -60,13 +67,14 @@ router.put("/:id", async (req, res, next) => {
         price,
       },
     });
-    res.send(product);
+    res.json(product);
   } catch (error) {
     next(error);
   }
 });
 
-// Delete product
+// deleteProduct.js
+
 router.delete("/:id", async (req, res, next) => {
   try {
     const product = await prisma.products.delete({
@@ -75,9 +83,9 @@ router.delete("/:id", async (req, res, next) => {
       },
     });
     if (!product) {
-      return res.status(404).send("product not found.");
+      return res.status(404).send("Product not found.");
     }
-    res.send(product);
+    res.json(product);
   } catch (error) {
     next(error);
   }
