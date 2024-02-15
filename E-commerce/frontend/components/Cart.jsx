@@ -6,7 +6,7 @@ import { useCreateOrderMutation } from "../api/ordersApi";
 
 export default function Cart() {
   const getCart = useGetCartQuery({
-    token:
+    token: //hardcoded for testing
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzA3OTY1NDQ4LCJleHAiOjE3MDc5NjkwNDh9.r6EkyesQHud8BOCEq1B-27XMcSRDsWtDYWT_gnu8Oz0",
   });
   const { cart } = useSelector((state) => state.cartSlice);
@@ -14,7 +14,7 @@ export default function Cart() {
 
   const checkout = async () => {
     await createOrder({
-      token:
+      token://hard coded for testing
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzA3OTY1NDQ4LCJleHAiOjE3MDc5NjkwNDh9.r6EkyesQHud8BOCEq1B-27XMcSRDsWtDYWT_gnu8Oz0",
     });
   };

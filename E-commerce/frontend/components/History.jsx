@@ -1,7 +1,7 @@
 import React from "react";
 import { useGetOrdersCustomerQuery } from "../api/ordersApi";
 import { useSelector } from "react-redux";
-import "../src/index.css"
+import "../src/index.css";
 
 export default function History() {
   const customer = useGetOrdersCustomerQuery({
@@ -29,7 +29,7 @@ export default function History() {
                 </>
               );
             })}
-            <hr/>
+            <hr />
           </div>
         );
       })}
