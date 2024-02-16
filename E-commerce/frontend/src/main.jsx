@@ -1,5 +1,7 @@
 import React from "react";
+import App from './App.jsx'
 import ReactDOM from "react-dom/client";
+import './index.css'
 import { Routes, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
@@ -15,7 +17,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <React.StrictMode>
       <Router>
         <Routes>
-          <Route path="/" element={<Users />}></Route>
+          <Route path="/" element={<App />}></Route>
+          <Route path="/users" element={<Users />}></Route>
           <Route path="/users/:id" element={<SingleUser />}></Route>
           <Route path="/users/register" element={<Register />}></Route>
           <Route path="/users/login" element={<Login />}></Route>

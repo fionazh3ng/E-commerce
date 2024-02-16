@@ -3,14 +3,6 @@ const { product } = require("../db");
 const prisma = new PrismaClient();
 const router = require("express").Router();
 
-// router.use((req, res, next) => {
-//     if (!req.user) {
-//       return res.status(200).send("You must be logged in to do that.");
-//     }
-//     next();
-//   });
-
-
 // admin can view any customers/admin orders based on the input id
 router.post("/customer", async (req, res, next) => {
   try {
@@ -74,7 +66,7 @@ router.get("/customer", async (req, res, next) => {
     //get all orders of user, looks into order table with reference to user id
     const orders = await prisma.orders.findMany({
       where: {
-        userid: 2, //req.user.id
+        userid: req.user.id, //req.user.id
       },
     });
     //get all order details of each order, looks into orderdetails table with reference to order id
@@ -119,16 +111,18 @@ router.post("/", async (req, res, next) => {
     //create an order to get the order number to add into each order item
     const orders = await prisma.orders.create({
       data: {
-        userid: 2, //hardcoded in need login/register to be done  //req.user.id
+        userid: req.user.id, //hardcoded in need login/register to be done  //req.user.id
       },
     });
-    //extract the items from the req
-    const { products } = req.body;
-    const array = [];
+    const cart = await prisma.cart.findMany({
+      where: {
+        userid: req.user.id,
+      },
+    });
+    let array = [];
     //loop through each item and add the orderid
-    for (let x of products) {
-      array.push({ ...x, orderid: orders.id });
-    }
+    for (let x of cart)
+      array.push({ productid: x.productid, orderid: orders.id });
     //add all the items into the orderdetails table
     const orderDetails = await prisma.orderdetails.createMany({
       data: array,
@@ -139,6 +133,13 @@ router.post("/", async (req, res, next) => {
         userid:req.user.id
       }
     })
+
+    await prisma.cart.deleteMany({
+      //once checkout is called, delete cart
+      where: {
+        userid: req.user.id,
+      },
+    });
 
     res.send({ orders, orderDetails });
   } catch (error) {

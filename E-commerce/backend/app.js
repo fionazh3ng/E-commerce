@@ -1,15 +1,13 @@
+const jwt = require("jsonwebtoken");
 const express = require("express");
 const app = express();
 const cors = require("cors");
-app.use(cors());
-
 const PORT = process.env.PORT || 3000;
 
+
+app.use(cors());
 app.use(express.json());
 
-app.listen(PORT, () => {
-  console.log(`Listening on port ${PORT}...`);
-});
 
 // Check requests for a token and attach the decoded id to the request
 app.use((req, res, next) => {
@@ -27,5 +25,10 @@ app.use((req, res, next) => {
 // Backend routes
 app.use("/api", require("./api"));
 app.use("/auth", require("./auth"));
+
+app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}...`);
+});
+
 
 module.exports = app;
