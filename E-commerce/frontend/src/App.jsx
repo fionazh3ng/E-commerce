@@ -1,15 +1,14 @@
 import React from "react";
+import AllProduct from "../components/AllProduct";
 import "./App.css";
-import Testing from "../components/testing";
-import Cart from "../components/Cart";
-import History from "../components/History";
 
-function App() {
+const App = () => {
   return (
-   <div className="App">
-      <h1>hii</h1>
+    <div className="App">
+      <h1>Welcome to our Store!</h1>
+      <AllProduct></AllProduct>
     </div>
   );
-}
+};
 
 export default App;
