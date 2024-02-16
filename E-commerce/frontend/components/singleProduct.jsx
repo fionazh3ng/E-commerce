@@ -1,16 +1,10 @@
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React from "react";
 import { useGetProductQuery } from "../api/productApi";
+import { useParams } from "react-router-dom";
 
-const SingleProduct = ({ productId }) => {
-  const dispatch = useDispatch();
-  const { data: product, isLoading, isError } = useGetProductQuery(productId);
-
-  useEffect(() => {
-    console.log("Fetching product details...");
-    // Fetch product details when component mounts
-    dispatch(fetchProduct(productId));
-  }, [dispatch, productId]);
+const SingleProduct = () => {
+  const { id } = useParams();
+  const { data: product, isLoading, isError } = useGetProductQuery(id);
 
   let productDetails = null;
 
@@ -19,11 +13,13 @@ const SingleProduct = ({ productId }) => {
   } else if (isError) {
     productDetails = <div>Error: Unable to fetch product details</div>;
   } else if (product) {
+    const { name, price, description } = product;
+
     productDetails = (
       <div>
-        <h2>{product.name}</h2>
-        <p>Price: {product.price}</p>
-        <p>Description: {product.description}</p>
+        <h2>{name}</h2>
+        <p>Price: {price}</p>
+        <p>Description: {description}</p>
       </div>
     );
   }

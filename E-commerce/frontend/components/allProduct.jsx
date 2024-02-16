@@ -1,17 +1,37 @@
-// AppProduct.jsx
-import React from "react";
-import SingleProduct from "./SingleProduct";
+// AllProduct.jsx
+import React, { useEffect } from "react";
+import { useGetProductsQuery } from "../api/productApi";
 
-const AppProduct = () => {
-  const productId = "exampleProductId";
+const AllProduct = () => {
+  const { data: products, error, isLoading } = useGetProductsQuery();
+console.log("hello world");
+  const result = useGetProductsQuery()
+console.log("get");
+console.log (result)
+  useEffect(() => {
+    // console.log("Products:", products);
+    // console.log("Error:", error);
+    // console.log("Loading:", isLoading);
+  }, [products, error, isLoading]);
 
-  console.log("Rendering AppProduct component");
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <div>
-      <h1>Product Details</h1>
-      <SingleProduct productId={productId} />
+      
+      <h1>All Product</h1>
+      <div className="product-list">
+        {products.map(product => (
+          <div key={product.id}>
+            <h2>{product.name}</h2>
+            <p>Price: ${product.price}</p>
+          </div>
+        ))}
+      </div>
+      
     </div>
   );
 };
-s
+
+export default AllProduct;

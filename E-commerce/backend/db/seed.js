@@ -6,7 +6,7 @@ const { product, descriptions, prices, url } = require("./index.js");
 const client = new Client({
   connectionString:
     process.env.DATABASE_URL ||
-    "postgresql://newuser\\@localhost:5432/ecommerce?schema=public",
+    "postgresql://newuser@localhost:5432/ecommerce?schema=public",
   ssl:
     process.env.NODE_ENV === "production"
       ? { rejectUnauthorized: false }
