@@ -1,11 +1,14 @@
 import React from "react";
+import AllProduct from "../components/AllProduct";
+import "./App.css";
 
-function App() {
+const App = () => {
   return (
     <div className="App">
-      <h1></h1>
+      <h1>Welcome to our Store!</h1>
+      <AllProduct></AllProduct>
     </div>
   );
-}
+};
 
 export default App;
