@@ -14,18 +14,21 @@ const authSlice = createSlice({
     builder.addMatcher(
       authApi.endpoints.registerUser.matchFulfilled,
       (state, { payload }) => {
-        return { ...state, token: payload.token, users: payload.user };
+        // console.log(payload);
+        return { ...state, user: payload };
       }
     ),
       builder.addMatcher(
         authApi.endpoints.loginUser.matchFulfilled,
         (state, { payload }) => {
+          // console.log(payload.token);
           return { ...state, token: payload.token };
         }
       ),
       builder.addMatcher(
         authApi.endpoints.getUserInfo.matchFulfilled,
         (state, { payload }) => {
+          // console.log(payload);
           return { ...state, users: payload };
         }
       );

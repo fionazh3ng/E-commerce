@@ -5,20 +5,21 @@ import { useLoginUserMutation } from "../api/authApi";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [loginUser] = useLoginUserMutation();
+  const [data] = useLoginUserMutation();
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
 
-  const login = (e) => {
+  const onChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    let info = await loginUser(form);
-    navigate("/users/me");
+
+    await data(form);
+    navigate("/");
   };
 
   return (
@@ -27,11 +28,11 @@ export default function Login() {
         <h2>Login</h2>
         <form onSubmit={onSubmit}>
           <label>
-            Email: <input type="email" name="email" onChange={login}></input>
+            Email: <input type="email" name="email" onChange={onChange}></input>
           </label>
           <label>
             Password:{" "}
-            <input type="password" name="password" onChange={login}></input>
+            <input type="password" name="password" onChange={onChange}></input>
           </label>
           <button>Submit</button>
         </form>

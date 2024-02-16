@@ -61,7 +61,7 @@ router.post("/login", async (req, res, next) => {
     const token = jwt.sign({ id: user.id }, process.env.JWT, {
       expiresIn: "1h",
     });
-    res.send(token);
+    res.send({ token });
   } catch (error) {
     next(error);
   }
@@ -72,7 +72,7 @@ router.get("/me", async (req, res, next) => {
   try {
     const user = await prisma.users.findFirst({
       where: {
-        id: Number(req.params.id),
+        email: req.body.email,
       },
     });
 

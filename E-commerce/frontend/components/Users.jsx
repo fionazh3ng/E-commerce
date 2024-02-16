@@ -9,7 +9,7 @@ function Users() {
   // console.log(users);
 
   return (
-    <div className="all-players">
+    <div className="all-users">
       {users.map((user) => {
         return (
           <div key={user.id}>
