@@ -2,6 +2,7 @@
 // const prisma = new prismaClient();
 const { Client } = require("pg");
 const { product, descriptions, prices, url } = require("./index.js");
+const bcrypt = require("bcrypt");
 
 const client = new Client({
   connectionString:
@@ -83,26 +84,26 @@ async function createTables() {
 async function createInitialUsers() {
   try {
     console.log("Starting to create users...");
-
+    const salt = await bcrypt.genSalt(10);
     await createUser({
       firstName: "qiao",
       lastName: "chen",
       email: "qiao@gmail.com",
-      password: "123",
+      password: await bcrypt.hash("123", salt),
       isAdmin: true,
     });
     await createUser({
       firstName: "fiona",
       lastName: "zheng",
       email: "fiona@gmail.com",
-      password: "123",
+      password: await bcrypt.hash("123", salt),
       isAdmin: true,
     });
     await createUser({
       firstName: "malik",
       lastName: "garvin",
       email: "malik@gmail.com",
-      password: "123",
+      password: await bcrypt.hash("123", salt),
       isAdmin: true,
     });
 
@@ -320,6 +321,7 @@ async function rebuildDB() {
     await createInitialOrders();
     await createInitialOrderDetails();
     await createInitialCart();
+
   } catch (error) {
     console.log("Error during rebuildDB");
     throw error;
