@@ -7,7 +7,7 @@ const bcrypt = require("bcrypt");
 const client = new Client({
   connectionString:
     process.env.DATABASE_URL ||
-    "postgresql://qiao@localhost:5432/ecommerce?schema=public",
+    "postgresql://fionazh3ng@localhost:5432/ecommerce?schema=public",
   ssl:
     process.env.NODE_ENV === "production"
       ? { rejectUnauthorized: false }
@@ -321,6 +321,7 @@ async function rebuildDB() {
     await createInitialOrders();
     await createInitialOrderDetails();
     await createInitialCart();
+
   } catch (error) {
     console.log("Error during rebuildDB");
     throw error;

@@ -7,6 +7,7 @@ router.get("/", async (req, res, next) => {
   try {
     const cart = await prisma.cart.findMany({
       where: {
+
         userid: req.user.id,
       },
     });
@@ -20,13 +21,14 @@ router.get("/", async (req, res, next) => {
           },
         }),
       });
+
+
     }
     res.send(result);
   } catch (error) {
     next(error);
   }
 });
-
 
 router.post("/", async (req, res, next) => {//add to cart
   try {
@@ -61,5 +63,6 @@ router.delete("/", async (req, res, next) => { //delete one item in cart
     next(error);
   }
 });
+
 
 module.exports = router;

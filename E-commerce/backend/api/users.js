@@ -11,6 +11,7 @@ router.use((req, res, next) => {
   next();
 });
 
+
 // Get all users
 router.get("/", async (req, res, next) => {
   try {

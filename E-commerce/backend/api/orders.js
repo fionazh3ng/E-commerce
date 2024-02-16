@@ -127,6 +127,12 @@ router.post("/", async (req, res, next) => {
     const orderDetails = await prisma.orderdetails.createMany({
       data: array,
     });
+    
+    await prisma.cart.deleteMany({
+      where:{
+        userid:req.user.id
+      }
+    })
 
     await prisma.cart.deleteMany({
       //once checkout is called, delete cart
