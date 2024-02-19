@@ -7,7 +7,7 @@ const bcrypt = require("bcrypt");
 const client = new Client({
   connectionString:
     process.env.DATABASE_URL ||
-    "postgresql://newuser@localhost:5432/ecommerce?schema=public",
+    "postgresql://qiao@localhost:5432/ecommerce?schema=public",
   ssl:
     process.env.NODE_ENV === "production"
       ? { rejectUnauthorized: false }
@@ -49,7 +49,7 @@ async function createTables() {
         CREATE TABLE products (
           id SERIAL PRIMARY KEY,
           name varchar(255) NOT NULL,
-          url varchar(255) NOT NULL,
+          url Text NOT NULL,
           description varchar(255) NOT NULL,
           price FLOAT NOT NULL
         );
@@ -121,7 +121,7 @@ async function createInitialProducts() {
     for (let i = 0; i < 48; i++) {
       await createProduct({
         name: product[i],
-        url: url,
+        url: url[i],
         description: descriptions[i],
         price: prices[i],
       });
@@ -321,7 +321,6 @@ async function rebuildDB() {
     await createInitialOrders();
     await createInitialOrderDetails();
     await createInitialCart();
-
   } catch (error) {
     console.log("Error during rebuildDB");
     throw error;
