@@ -10,6 +10,7 @@ const cartSlice = createSlice({
     builder.addMatcher(
       cartApi.endpoints.getCart.matchFulfilled,
       (state, { payload }) => {
+        console.log(payload);
         state.cart = payload;
         return state;
       }
@@ -17,7 +18,8 @@ const cartSlice = createSlice({
     builder.addMatcher(
       cartApi.endpoints.addToCart.matchFulfilled,
       (state, { payload }) => {
-        state.cart.push(payload);
+        console.log(payload);
+        state.cart = payload;
         return state;
       }
     );

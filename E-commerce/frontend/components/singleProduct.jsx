@@ -1,6 +1,7 @@
 import React from "react";
 import { useGetProductQuery } from "../api/productApi";
 import { useParams } from "react-router-dom";
+import Navigation from "../components/Navigation";
 
 const SingleProduct = () => {
   const { id } = useParams();
@@ -24,7 +25,14 @@ const SingleProduct = () => {
     );
   }
 
-  return <div>{productDetails}</div>;
+  return (
+  <>
+    <Navigation></Navigation>
+    <div>
+    {productDetails}
+    </div>;
+    </>
+  )
 };
 
 export default SingleProduct;

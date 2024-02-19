@@ -36,8 +36,11 @@ router.post("/register", async (req, res, next) => {
         password: hashedPassword,
       },
     });
+    const token = jwt.sign({ id: user.id }, process.env.JWT, {
+      expiresIn: "1h",
+    });
 
-    res.send(user);
+    res.send({ user, token });
   } catch (error) {
     next(error);
   }
@@ -46,22 +49,26 @@ router.post("/register", async (req, res, next) => {
 // login to an existing account
 router.post("/login", async (req, res, next) => {
   try {
+    if (!req.body.email)
+      return res.status(401).send("Invalid login credentials");
     const user = await prisma.users.findFirst({
       where: {
         email: req.body.email,
       },
     });
 
+    if (user.email !== req.body.email)
+      return res.status(401).send("Invalid login credentials");
     const match = await bcrypt.compare(req.body.password, user?.password);
 
     if (!match) {
-      res.status(401).send("Invalid login credentials.");
+      return res.status(401).send("Invalid login credentials.");
     }
 
     const token = jwt.sign({ id: user.id }, process.env.JWT, {
       expiresIn: "1h",
     });
-    res.send({ token });
+    res.send({ token, user });
   } catch (error) {
     next(error);
   }
@@ -72,7 +79,7 @@ router.get("/me", async (req, res, next) => {
   try {
     const user = await prisma.users.findFirst({
       where: {
-        email: req.body.email,
+        id: req.user.id,
       },
     });
 

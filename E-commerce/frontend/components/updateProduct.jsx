@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useUpdateProductMutation } from "../api/productApi";
+import Navigation from "../components/Navigation";
 
 const UpdateProduct = ({ product }) => {
   const dispatch = useDispatch();
@@ -14,7 +15,7 @@ const UpdateProduct = ({ product }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Submitting updated product:", formData); // Adding console.log here
+    // console.log("Submitting updated product:", formData); // Adding console.log here
     dispatch(updateProduct(formData));
   };
 
@@ -26,7 +27,8 @@ const UpdateProduct = ({ product }) => {
     return <div>Error: Unable to update product</div>;
   }
 
-  return (
+  return (<>
+ <Navigation></Navigation>
     <div>
       <h2>Update Product</h2>
       <form onSubmit={handleSubmit}>
@@ -62,6 +64,7 @@ const UpdateProduct = ({ product }) => {
         <button type="submit">Update Product</button>
       </form>
     </div>
+    </>
   );
 };
 
