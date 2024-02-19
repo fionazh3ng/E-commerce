@@ -13,7 +13,8 @@ export default function Account() {
       <Navigation></Navigation>
       {users && (
         <div className="user-detail">
-          <h2>Account Details: </h2>
+          <h2>Account Details </h2>
+          <hr/>
           <h4>Id: {users.id}</h4>
           <h4>First Name: {users.firstname}</h4>
           <h4>Last Name: {users.lastname}</h4>
