@@ -1,7 +1,9 @@
 // productSlice.js
 
 import { createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 // Define the initial state
 const initialState = {
@@ -12,32 +14,47 @@ const initialState = {
 };
 
 export const fetchProduct = (productId) => async (dispatch) => {
+  dispatch(setLoading(true));
   try {
-    dispatch(fetchProductStart());
-    const response = await axios.get(`/api/products/${productId}`);
-    dispatch(fetchProductSuccess(response.data));
+    const product = await prisma.product.findUnique({
+      where: {
+        id: productId,
+      },
+    });
+    dispatch(fetchSuccess(product));
   } catch (error) {
-    dispatch(fetchProductFailure(error.message));
+    dispatch(setError(error.message));
+  } finally {
+    dispatch(setLoading(false));
   }
 };
 
 export const updateProduct = (product) => async (dispatch) => {
+  dispatch(setLoading(true));
   try {
-    dispatch(updateProductStart());
-    const response = await axios.put(`/api/products/${product.id}`, product);
-    dispatch(updateProductSuccess(response.data));
+    const updatedProduct = await prisma.product.update({
+      where: {
+        id: product.id,
+      },
+      data: product,
+    });
+    dispatch(fetchSuccess(updatedProduct));
   } catch (error) {
-    dispatch(updateProductFailure(error.message));
+    dispatch(setError(error.message));
+  } finally {
+    dispatch(setLoading(false));
   }
 };
 
 export const fetchAllProducts = () => async (dispatch) => {
+  dispatch(setLoading(true));
   try {
-    dispatch(fetchAllProductsStart());
-    const response = await axios.get("/api/products");
-    dispatch(fetchAllProductsSuccess(response.data));
+    const products = await prisma.product.findMany();
+    dispatch(fetchAllSuccess(products));
   } catch (error) {
-    dispatch(fetchAllProductsFailure(error.message));
+    dispatch(setError(error.message));
+  } finally {
+    dispatch(setLoading(false));
   }
 };
 
@@ -46,41 +63,17 @@ const productSlice = createSlice({
   name: "product",
   initialState,
   reducers: {
-    fetchProductStart(state) {
-      state.loading = true;
-      state.error = null;
+    setLoading(state, action) {
+      state.loading = action.payload;
     },
-    fetchProductSuccess(state, action) {
-      state.loading = false;
-      state.product = action.payload;
-    },
-    fetchProductFailure(state, action) {
-      state.loading = false;
+    setError(state, action) {
       state.error = action.payload;
     },
-    updateProductStart(state) {
-      state.loading = true;
-      state.error = null;
-    },
-    updateProductSuccess(state, action) {
-      state.loading = false;
+    fetchSuccess(state, action) {
       state.product = action.payload;
     },
-    updateProductFailure(state, action) {
-      state.loading = false;
-      state.error = action.payload;
-    },
-    fetchAllProductsStart(state) {
-      state.loading = true;
-      state.error = null;
-    },
-    fetchAllProductsSuccess(state, action) {
-      state.loading = false;
+    fetchAllSuccess(state, action) {
       state.products = action.payload;
-    },
-    fetchAllProductsFailure(state, action) {
-      state.loading = false;
-      state.error = action.payload;
     },
   },
 });
