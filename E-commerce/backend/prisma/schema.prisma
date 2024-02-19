@@ -26,7 +26,7 @@ model orders {
 model products {
   id           Int            @id @default(autoincrement())
   name         String         @db.VarChar(255)
-  url          String         @db.VarChar(255)
+  url          String         @db.Text
   description  String         @db.VarChar(255)
   price        Float
   cart         cart[]

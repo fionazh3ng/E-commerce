@@ -21,8 +21,8 @@ export default function Register() {
     e.preventDefault();
 
     const results = addNewUser(form);
-    console.log(results);
-    // navigate("/users/me");
+    // console.log(results);
+    navigate("/users/me");
   };
 
   return (
