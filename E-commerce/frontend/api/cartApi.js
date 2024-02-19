@@ -16,21 +16,21 @@ export const cartApi = createApi({
       }),
     }),
     addToCart: builder.mutation({
-      query: (id) => ({
-        url: "/customer",
+      query: ({productid,token}) => ({
+        url: "/",
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: {
-          id,
+          productid,
         },
       }),
     }),
     deleteCart: builder.mutation({
       //delete one item in cart
-      query: (id) => ({
+      query: ({id,token}) => ({
         url: "/",
         method: "DELETE",
         headers: {
@@ -38,12 +38,25 @@ export const cartApi = createApi({
           Authorization: `Bearer ${token}`,
         },
         body: {
-          id,
+          productid:id,
+        },
+      }),
+    }),
+    sessionAddToCart: builder.mutation({
+      query: ({token,cart}) => ({
+        url: "/sessionCart",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: {
+          cart,
         },
       }),
     }),
   }),
 });
 
-export const { useGetCartQuery, useAddToCartMutation, useDeleteCartMutation } =
+export const { useGetCartQuery, useAddToCartMutation, useDeleteCartMutation ,useSessionAddToCartMutation} =
   cartApi;
