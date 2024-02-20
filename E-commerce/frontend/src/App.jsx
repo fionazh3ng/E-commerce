@@ -1,7 +1,7 @@
 import React from "react";
-import AllProduct from "../components/allProduct";
+import AllProduct from "../components/allProduct"; // Corrected import path
 import "./App.css";
-import Navigation from "../components/Navigation";
+import Navigation from "../components/Navigation"; // Corrected import path
 
 const App = () => {
   return (
@@ -13,4 +13,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default App; // Corrected export statement

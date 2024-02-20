@@ -1,58 +1,41 @@
-// AllProduct.jsx
-import React, { useEffect } from "react";
-import { useGetProductsQuery } from "../api/productApi";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { useAddToCartMutation } from "../api/cartApi";
+// AllProduct.js
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  useGetProductsQuery,
+  useCreateProductMutation,
+} from "../api/productApi";
+import { useSelector, useDispatch } from "react-redux";
+import { createProductSuccess } from "../slice/productSlice";
 
 const AllProduct = () => {
+  const dispatch = useDispatch();
   const { data: products, error, isLoading } = useGetProductsQuery();
-  const result = useGetProductsQuery();
-  const { users } = useSelector((state) => state.authSlice);
-  const { token } = useSelector((state) => state.authSlice);
-  const [addToCart] = useAddToCartMutation();
-  const navigate = useNavigate();
+  const { users, token } = useSelector((state) => state.authSlice);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [productName, setProductName] = useState("");
+  const [productPrice, setProductPrice] = useState("");
+  const [productDescription, setProductDescription] = useState("");
+  const [createProduct] = useCreateProductMutation();
+
   useEffect(() => {}, [products, error, isLoading]);
 
-  const cartSession = (e) => {
-    if (window.sessionStorage.cart) {
-      //get cart
-      const cart = JSON.parse(window.sessionStorage.cart);
-      //get counter
-      const counter = JSON.parse(window.sessionStorage.counter);
-      //if item in cart exit
-      if (counter[e.target.dataset.targetId]) return;
-      //set item to true
-      counter[e.target.dataset.targetId] = true;
-      //add item into cart
-      cart.push({
-        productid: e.target.dataset.targetId,
-        productname: e.target.dataset.targetName,
-        producturl: e.target.dataset.targetUrl,
-        productprice: e.target.dataset.targetPrice,
+  const handleCreateProduct = () => {
+    setShowCreateForm(true);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await createProduct({
+        name: productName,
+        price: productPrice,
+        description: productDescription,
       });
-      //update cart with new item
-      window.sessionStorage.setItem("cart", JSON.stringify(cart));
-      //update counter
-      window.sessionStorage.setItem("counter", JSON.stringify(counter));
-    } else {
-      //create cart
-      window.sessionStorage.setItem(
-        "cart",
-        JSON.stringify([
-          {
-            productid: e.target.dataset.targetId,
-            productname: e.target.dataset.targetName,
-            producturl: e.target.dataset.targetUrl,
-            productprice: e.target.dataset.targetPrice,
-          },
-        ])
-      );
-      //create counter
-      window.sessionStorage.setItem(
-        "counter",
-        JSON.stringify({ [e.target.dataset.targetId]: true })
-      );
+      dispatch(createProductSuccess(response.data));
+      setShowCreateForm(false);
+    } catch (error) {
+      console.error("Error creating product:", error);
     }
   };
 
@@ -64,35 +47,62 @@ const AllProduct = () => {
       <h1>All Product</h1>
       {token && users.isadmin && (
         <div>
-          <button onClick={() => {}}>Create</button>
+          <button onClick={handleCreateProduct}>Create</button>
+          {showCreateForm && (
+            <form onSubmit={handleSubmit}>
+              <label>
+                Product Name:
+                <input
+                  type="text"
+                  value={productName}
+                  onChange={(e) => setProductName(e.target.value)}
+                  required
+                />
+              </label>
+              <label>
+                Price:
+                <input
+                  type="number"
+                  value={productPrice}
+                  onChange={(e) => setProductPrice(e.target.value)}
+                  required
+                />
+              </label>
+              <label>
+                Description:
+                <textarea
+                  value={productDescription}
+                  onChange={(e) => setProductDescription(e.target.value)}
+                  required
+                />
+              </label>
+              <button type="submit">Submit</button>
+            </form>
+          )}
         </div>
       )}
       <div className="product-list cart">
         {products.map((product) => (
           <div key={product.id}>
-            <h2>{product.name}</h2>
-            <img src={product.url} alt={product.name} />
-            <p>Price: ${product.price}</p>
-
-            {/* {token && users.isadmin && ( */}
-            <div>
-              <button
-                id={product.id}
-                data-target-id={product.id}
-                data-target-name={product.name}
-                data-target-url={product.url}
-                data-target-price={product.price}
-                onClick={(e) => {
-                  //guest user? save to session
-                  return !token
-                    ? cartSession(e)
-                    : addToCart({ productid: Number(e.target.id), token });
+            <h2>
+              <Link
+                to={{
+                  pathname: `/product/${product.id}`,
+                  state: { imageUrl: product.url }, // Pass image URL as state
                 }}
               >
-                Add To Cart
+                {product.name}
+              </Link>
+            </h2>
+            <img src={product.url} alt={product.name} />
+            <p>Price: ${product.price}</p>
+            {token && users.isadmin && (
+              <button
+                onClick={() => handleUpdateProduct(product.id)}
+              >
+                Update
               </button>
-            </div>
-            {/* )} */}
+            )}
           </div>
         ))}
       </div>
