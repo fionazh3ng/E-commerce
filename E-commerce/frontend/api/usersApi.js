@@ -18,7 +18,13 @@ export const usersApi = createApi({
     }),
 
     getUser: builder.query({
-      query: (id) => "/api/users/" + id,
+      query: ({ id, token }) => ({
+        url: "/api/users/" + id,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }),
     }),
 
     updateUser: builder.mutation({

@@ -7,7 +7,7 @@ const bcrypt = require("bcrypt");
 const client = new Client({
   connectionString:
     process.env.DATABASE_URL ||
-    "postgresql://qiao@localhost:5432/ecommerce?schema=public",
+    "postgresql://fionazh3ng@localhost:5432/ecommerce",
   ssl:
     process.env.NODE_ENV === "production"
       ? { rejectUnauthorized: false }
