@@ -8,6 +8,7 @@ export default function History() {
   const { token } = useSelector((state) => state.authSlice);
   const customer = useGetOrdersCustomerQuery({ token });
   const { order } = useSelector((state) => state.orderSlice);
+
   return (
     <>
       <Navigation></Navigation>
@@ -16,7 +17,10 @@ export default function History() {
           return (
             <div>
               <div>Order Number: {order.id}</div>
-              <div>Order Placed: {order.createdat.slice(0,order.createdat.search("T"))}</div>
+              <div>
+                Order Placed:{" "}
+                {order.createdat.slice(0, order.createdat.search("T"))}
+              </div>
               {order.productInfo.map((product) => {
                 return (
                   <>
