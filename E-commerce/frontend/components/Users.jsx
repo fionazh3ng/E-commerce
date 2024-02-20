@@ -8,7 +8,6 @@ function Users() {
   const { token } = useSelector((state) => state.authSlice);
   const { data } = useGetUsersQuery({ token }); // making api call
   const { users } = useSelector((state) => state.usersSlice); // making call to state
-  console.log(users);
 
   return (
     <>
