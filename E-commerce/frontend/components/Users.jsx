@@ -12,6 +12,8 @@ function Users() {
   return (
     <>
       <Navigation></Navigation>
+      <h1 className="margintop">All Users</h1>
+      <hr/>
       <div className="all-users">
         {users.map((user) => {
           return (

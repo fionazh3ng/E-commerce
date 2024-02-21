@@ -69,7 +69,7 @@ router.delete("/", async (req, res, next) => {
   try {
     const findCheckoutId = await prisma.cart.findFirst({
       where: {
-        productid: req.body.productid,
+        productid: Number(req.body.productid),
         userid: req.user.id,
       },
     });
@@ -78,7 +78,24 @@ router.delete("/", async (req, res, next) => {
         id: findCheckoutId.id,
       },
     });
-    return res.send(checkout);
+    // return res.send(checkout);
+    const cart = await prisma.cart.findMany({
+      where: {
+        userid: req.user.id,
+      },
+    });
+    let result = [];
+    for (let x of cart) {
+      result.push({
+        ...x,
+        productDescription: await prisma.products.findFirst({
+          where: {
+            id: x.productid,
+          },
+        }),
+      });
+    }
+    res.send(result);
   } catch (error) {
     next(error);
   }

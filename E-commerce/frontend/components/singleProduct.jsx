@@ -18,21 +18,22 @@ const SingleProduct = () => {
 
     productDetails = (
       <div>
+        <h1 className="margintop">{name}</h1>
+        <hr />
         <h2>{name}</h2>
         <p>Price: {price}</p>
+        <img className="imagesingle" src={product.url} alt={name} />
         <p>Description: {description}</p>
       </div>
     );
   }
 
   return (
-  <>
-    <Navigation></Navigation>
-    <div>
-    {productDetails}
-    </div>;
+    <>
+      <Navigation></Navigation>
+      <div className="centera">{productDetails}</div>
     </>
-  )
+  );
 };
 
 export default SingleProduct;

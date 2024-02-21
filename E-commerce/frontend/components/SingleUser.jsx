@@ -23,30 +23,46 @@ export default function SingleUser() {
   const order = useSelector((state) => state.orderSlice);
   console.log(order.order);
 
+  let newOrder = [];
+  for (let i = 0; i < order.order.length; i++) {
+    let totalPrice = 0;
+    for (let x of order.order[i].productInfo) {
+      totalPrice += x.productDescription.price;
+    }
+    newOrder.push({
+      totalPrice,
+      ...order.order[i],
+    });
+  }
+console.log(newOrder)
   return (
     <>
       <Navigation></Navigation>
+      <h2></h2>
       <div className="single-user">
-        <h2>User Details: </h2>
+        <h2 className="margintop">User Details </h2>
+        <hr/>
         <h4>ID: {user?.user?.id}</h4>
         <p>First Name: {user?.user?.firstname}</p>
         <p>Last Name: {user?.user?.lastname}</p>
         <p>Email: {user?.user?.email}</p>
       </div>
-      <div className="user-orders">
-        <h2>Order History:</h2>
-        {order.order.length &&
-          order.order.map((item) => {
+      <div className="user-orders" >
+        <h2>Order History</h2>
+        <hr/>
+        {newOrder.length &&
+          newOrder.map((item,index) => {
             // if (item.userid === id) {
             return (
-              <div key={item.id}>
+              <div key={index}>
                 <h4>Order Number: {item.id}</h4>
-                <p>{item.createdat}</p>
+                <div>Total Price: {item.totalPrice}</div>
+                <p>{item.createdat.slice(0, item.createdat.search("T"))}</p>
                 {item.productInfo.map((itm) => {
                   return (
                     <div key={item.id}>
                       <h4>{itm.productDescription.name}</h4>
-                      {/* <img src={itm.productDescription.url} /> */}
+                      <img className="imgsize"src={itm.productDescription.url} />
                     </div>
                   );
                 })}
