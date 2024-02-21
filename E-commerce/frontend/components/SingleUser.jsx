@@ -6,6 +6,7 @@ import Navigation from "../components/Navigation";
 
 export default function SingleUser() {
   const { id } = useParams();
+  const { token } = useSelector((state) => state.authSlice);
   const { data } = useGetUserQuery(id);
   const { user } = useSelector((state) => state.usersSlice);
 

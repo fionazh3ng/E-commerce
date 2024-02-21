@@ -17,69 +17,77 @@ export default function Navigation() {
   };
 
   return (
-    <div>
-      <button
-        onClick={() => {
-          navigate(`/`);
-        }}
-      >
-        Home
-      </button>
+    <div className="navBar">
+      <div className="navTitle">
+        <h2>Welcome to our Store!</h2>
+      </div>
+      <div className="navButtons">
+        <button
+          onClick={() => {
+            navigate(`/`);
+          }}
+        >
+          Home
+        </button>
 
-      {!token && (
-        <>
-          <button
-            onClick={() => {
-              navigate(`/users/login`);
-            }}
-          >
-            Login
-          </button>
+        {!token && (
+          <>
+            <button
+              onClick={() => {
+                navigate(`/users/login`);
+              }}
+            >
+              Login
+            </button>
 
-          <button
-            onClick={() => {
-              navigate(`/users/register`);
-            }}
-          >
-            Register
-          </button>
-        </>
-      )}
-      {token && (
-        <>
-          <button
-            onClick={() => {
-              navigate(`/users/me`);
-            }}
-          >
-            Account
-          </button>
-          <button
-        onClick={() => {
-          navigate(`/history`);
-        }}
-      >
-        History
-      </button>
-          <button onClick={logout}>Logout</button>
-        </>
-      )}
-         {token && users.isadmin &&<><button
-        onClick={() => {
-          navigate(`/users`);
-        }}
-      >
-        User
-      </button></>}
-     
-      <button
-        onClick={() => {
-          navigate(`/cart`);
-        }}
-      >
-        Cart
-      </button>
+            <button
+              onClick={() => {
+                navigate(`/users/register`);
+              }}
+            >
+              Register
+            </button>
+          </>
+        )}
+        {token && (
+          <>
+            <button
+              onClick={() => {
+                navigate(`/users/me`);
+              }}
+            >
+              Account
+            </button>
+            <button
+              onClick={() => {
+                navigate(`/history`);
+              }}
+            >
+              History
+            </button>
+            <button onClick={logout}>Logout</button>
+          </>
+        )}
+        {token && users.isadmin && (
+          <>
+            <button
+              onClick={() => {
+                navigate(`/users`);
+              }}
+            >
+              User
+            </button>
+          </>
+        )}
+
+        <button
+          onClick={() => {
+            navigate(`/cart`);
+          }}
+        >
+          Cart
+        </button>
+      </div>
     </div>
-    
   );
 }

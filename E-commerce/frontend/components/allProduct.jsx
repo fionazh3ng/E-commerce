@@ -4,6 +4,7 @@ import { useGetProductsQuery } from "../api/productApi";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useAddToCartMutation } from "../api/cartApi";
+import img from "../src/assets/add-to-cart-3046.png";
 
 const AllProduct = () => {
   const { data: products, error, isLoading } = useGetProductsQuery();
@@ -61,7 +62,7 @@ const AllProduct = () => {
 
   return (
     <div>
-      <h1>All Product</h1>
+      <h1 className="productTitle">All Products</h1>
       {token && users.isadmin && (
         <div>
           <button onClick={() => {}}>Create</button>
@@ -69,14 +70,32 @@ const AllProduct = () => {
       )}
       <div className="product-list cart">
         {products.map((product) => (
-          <div key={product.id}>
+          <div className="soloItems" key={product.id}>
             <h2>{product.name}</h2>
             <img src={product.url} alt={product.name} />
-            <p>Price: ${product.price}</p>
+            <h4>${product.price}</h4>
 
             {/* {token && users.isadmin && ( */}
-            <div>
-              <button
+            <div className="addImg">
+              <img
+                src={img}
+                alt="add"
+                className="productButton"
+                id={product.id}
+                data-target-id={product.id}
+                data-target-name={product.name}
+                data-target-url={product.url}
+                data-target-price={product.price}
+                style={{ height: "50px", width: "50px" }}
+                onClick={(e) => {
+                  //guest user? save to session
+                  return !token
+                    ? cartSession(e)
+                    : addToCart({ productid: Number(e.target.id), token });
+                }}
+              />
+              {/* <button
+                className="productButton"
                 id={product.id}
                 data-target-id={product.id}
                 data-target-name={product.name}
@@ -90,9 +109,8 @@ const AllProduct = () => {
                 }}
               >
                 Add To Cart
-              </button>
+              </button> */}
             </div>
-            {/* )} */}
           </div>
         ))}
       </div>
