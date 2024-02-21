@@ -27,7 +27,7 @@ const usersSlice = createSlice({
       // PUT
       usersApi.endpoints.updateUser.matchFulfilled,
       (state, { payload }) => {
-        // console.log(payload);
+        console.log(payload);
         state.users = state.users.map((user) => {
           if (user.id === payload.user.id) {
             return payload.user;

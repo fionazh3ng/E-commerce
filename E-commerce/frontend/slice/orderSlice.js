@@ -15,7 +15,6 @@ const orderSlice = createSlice({
     builder.addMatcher(
       ordersApi.endpoints.getOrdersAdmin.matchFulfilled,
       (state, { payload }) => {
-        console.log(payload);
         state.order = payload;
         return state;
       }

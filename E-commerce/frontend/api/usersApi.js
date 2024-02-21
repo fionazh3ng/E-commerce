@@ -28,13 +28,16 @@ export const usersApi = createApi({
     }),
 
     updateUser: builder.mutation({
-      query: ({ id, firstname, lastname, email, password }) => ({
-        url: "/api/users/" + id,
+      query: ({ id, firstname, lastname, password, token }) => ({
+        url: "/api/users/me/" + id,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         method: "PUT",
         body: {
           firstname,
           lastname,
-          email,
           password,
         },
       }),

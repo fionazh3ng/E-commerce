@@ -1,11 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import Navigation from "../components/Navigation";
+import { useNavigate } from "react-router-dom";
 
 export default function Account() {
   const { users, token } = useSelector((state) => state.authSlice);
-  console.log(users);
+  const navigate = useNavigate();
 
+  const onEdit = () => {
+    navigate(`/users/me/${users.id}`);
+  };
   return (
     <div>
       <Navigation></Navigation>
@@ -18,6 +22,7 @@ export default function Account() {
           <h4>Last Name: {users.lastname}</h4>
           <h4>Email: {users.email}</h4>
           <h4>Password: {users.password}</h4>
+          <button onClick={onEdit}>Edit</button>
         </div>
       )}
     </div>

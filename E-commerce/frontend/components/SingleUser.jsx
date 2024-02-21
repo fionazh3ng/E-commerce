@@ -21,7 +21,7 @@ export default function SingleUser() {
   }, []);
 
   const order = useSelector((state) => state.orderSlice);
-  console.log(order.order);
+  // console.log(order.order);
 
   return (
     <>
@@ -37,16 +37,14 @@ export default function SingleUser() {
         <h2>Order History:</h2>
         {order.order.length &&
           order.order.map((item) => {
-            // if (item.userid === id) {
             return (
               <div key={item.id}>
                 <h4>Order Number: {item.id}</h4>
                 <p>{item.createdat}</p>
                 {item.productInfo.map((itm) => {
                   return (
-                    <div key={item.id}>
+                    <div key={item.productInfo.id}>
                       <h4>{itm.productDescription.name}</h4>
-                      {/* <img src={itm.productDescription.url} /> */}
                     </div>
                   );
                 })}

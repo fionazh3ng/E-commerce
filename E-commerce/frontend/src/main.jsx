@@ -16,6 +16,7 @@ import SingleProduct from "../components/singleProduct";
 import UpdateProduct from "../components/updateProduct";
 import Cart from "../components/Cart.jsx";
 import History from "../components/History.jsx";
+import EditProfile from "../components/EditProfile.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
@@ -31,6 +32,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           <Route path="/users/register" element={<Register />}></Route>
           <Route path="/users/login" element={<Login />}></Route>
           <Route path="/users/me" element={<Account />}></Route>
+          <Route path="/users/me/:id" element={<EditProfile />}></Route>
           <Route path="/cart" element={<Cart />}></Route>
           <Route path="/history" element={<History />}></Route>
         </Routes>
