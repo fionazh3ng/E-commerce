@@ -5,7 +5,11 @@ import { ordersApi } from "../api/ordersApi";
 const cartSlice = createSlice({
   name: "cartSlice",
   initialState: { cart: [] },
-  reducers: {},
+  reducers: {
+    setCart: (state, action) => {
+      state.cart = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder.addMatcher(
       cartApi.endpoints.getCart.matchFulfilled,
@@ -26,12 +30,13 @@ const cartSlice = createSlice({
     builder.addMatcher(
       cartApi.endpoints.deleteCart.matchFulfilled,
       (state, { payload }) => {
-        state.cart = state.cart.map((product) => {
-          if (product.productid !== payload.productid) {
-            return product;
-          }
-        });
-        return state;
+        // state.cart = state.cart.map((product) => {
+        //   if (product.productid !== payload.productid) {
+        //     return product;
+        //   }
+        // });
+        // return state;
+        state.cart = payload;
       }
     );
     builder.addMatcher(

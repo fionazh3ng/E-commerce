@@ -4,6 +4,7 @@ import { useGetProductsQuery } from "../api/productApi";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useAddToCartMutation } from "../api/cartApi";
+import img from "../src/assets/white_cart.jpg";
 
 const AllProduct = () => {
   const { data: products, error, isLoading } = useGetProductsQuery();
@@ -18,12 +19,6 @@ const AllProduct = () => {
     if (window.sessionStorage.cart) {
       //get cart
       const cart = JSON.parse(window.sessionStorage.cart);
-      //get counter
-      const counter = JSON.parse(window.sessionStorage.counter);
-      //if item in cart exit
-      if (counter[e.target.dataset.targetId]) return;
-      //set item to true
-      counter[e.target.dataset.targetId] = true;
       //add item into cart
       cart.push({
         productid: e.target.dataset.targetId,
@@ -34,7 +29,6 @@ const AllProduct = () => {
       //update cart with new item
       window.sessionStorage.setItem("cart", JSON.stringify(cart));
       //update counter
-      window.sessionStorage.setItem("counter", JSON.stringify(counter));
     } else {
       //create cart
       window.sessionStorage.setItem(
@@ -48,11 +42,6 @@ const AllProduct = () => {
           },
         ])
       );
-      //create counter
-      window.sessionStorage.setItem(
-        "counter",
-        JSON.stringify({ [e.target.dataset.targetId]: true })
-      );
     }
   };
 
@@ -61,7 +50,8 @@ const AllProduct = () => {
 
   return (
     <div>
-      <h1>All Product</h1>
+      <h1 className="productTitle">All Products</h1>
+      <hr />
       {token && users.isadmin && (
         <div>
           <button onClick={() => {}}>Create</button>
@@ -69,14 +59,50 @@ const AllProduct = () => {
       )}
       <div className="product-list cart">
         {products.map((product) => (
-          <div key={product.id}>
-            <h2>{product.name}</h2>
-            <img src={product.url} alt={product.name} />
-            <p>Price: ${product.price}</p>
+          <div className="soloItems" key={product.id}>
+            <h2
+              onClick={() => {
+                navigate(`/product/${product.id}`);
+              }}
+            >
+              {product.name}
+            </h2>
+            <img
+              onClick={() => {
+                navigate(`/product/${product.id}`);
+              }}
+              src={product.url}
+              alt={product.name}
+            />
+            <h4
+              onClick={() => {
+                navigate(`/product/${product.id}`);
+              }}
+            >
+              ${product.price}
+            </h4>
 
             {/* {token && users.isadmin && ( */}
-            <div>
-              <button
+            <div className="addImg">
+              <img
+                src={img}
+                alt="add"
+                className="productButton"
+                id={product.id}
+                data-target-id={product.id}
+                data-target-name={product.name}
+                data-target-url={product.url}
+                data-target-price={product.price}
+                style={{ height: "50px", width: "50px" }}
+                onClick={(e) => {
+                  //guest user? save to session
+                  return !token
+                    ? cartSession(e)
+                    : addToCart({ productid: Number(e.target.id), token });
+                }}
+              />
+              {/* <button
+                className="productButton"
                 id={product.id}
                 data-target-id={product.id}
                 data-target-name={product.name}
@@ -90,9 +116,8 @@ const AllProduct = () => {
                 }}
               >
                 Add To Cart
-              </button>
+              </button> */}
             </div>
-            {/* )} */}
           </div>
         ))}
       </div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useGetCartQuery } from "../api/cartApi";
+import { useDeleteCartMutation, useGetCartQuery } from "../api/cartApi";
 import { useSelector } from "react-redux";
 import "../src/index.css";
 import { useCreateOrderMutation } from "../api/ordersApi";
@@ -7,64 +7,98 @@ import Navigation from "../components/Navigation";
 
 export default function Cart() {
   const { token } = useSelector((state) => state.authSlice);
-  console.log(token);
+  const [deleteItem] = useDeleteCartMutation();
   const getCart = useGetCartQuery({ token });
   const { cart } = useSelector((state) => state.cartSlice);
   const [createOrder] = useCreateOrderMutation();
 
-  const [session, setSession] = useState({ cart: [], counter: {} });
+  const [session, setSession] = useState({ cart: [] });
 
   useEffect(() => {
     const setCart = () => {
       const data = {
         cart: JSON.parse(window.sessionStorage.cart),
-        counter: JSON.parse(window.sessionStorage.counter),
       };
       setSession(data);
     };
     if (!token && window.sessionStorage.cart) setCart();
+    if (!token) {
+      cartPrice = session.cart;
+      cartPrice.forEach((x) => {
+        totalPrice += Number(x.productprice);
+      });
+    } else {
+      cartPrice = cart;
+      cartPrice.forEach((x) => {
+        totalPrice += Number(x.productDescription.price);
+      });
+    }
   }, []);
 
   const checkout = async () => {
     await createOrder({ token });
   };
+  console.log(cart);
+  let totalPrice = 0;
+  let cartPrice = [];
+  // if (!token) {
+  //   cartPrice = session.cart;
+  //   cartPrice.forEach((x) => {
+  //     totalPrice += Number(x.productprice);
+  //   });
+  // } else {
+  //   cartPrice = cart;
+  //   cartPrice.forEach((x) => {
+  //     totalPrice += Number(x.productDescription.price);
+  //   });
+  // }
+
+  const remove = (id) => {
+    console.log(id, token);
+    deleteItem({
+      id: Number(id),
+      token,
+    });
+  };
   return (
     <>
       <Navigation></Navigation>
+      <h1 className="margintop">Cart</h1>
+      <hr />
       {(!token && session.cart.length && (
         <div className="cart">
-          {session.cart.map((item) => {
+          {session.cart.map((item, index) => {
             return (
-              <div key={item.productid}>
+              <div key={index}>
                 <h3>
                   {item.productname} - ${item.productprice}
                 </h3>
-                <img src={item.producturl} alt={item.productname} />
+                <img
+                  className="imgsize"
+                  src={item.producturl}
+                  alt={item.productname}
+                />
                 <div>
                   <button
                     id={item.productid}
                     onClick={(e) => {
                       if (session.cart.length === 1) {
                         window.sessionStorage.removeItem("cart");
-                        window.sessionStorage.removeItem("counter");
-                        setSession({ cart: [], counter: {} });
+                        setSession({ cart: [] });
                         return;
                       }
-                      let cart = session.cart;
-                      const counter = session.counter;
+                      const cart = [];
                       console.log(cart, e.target.id);
-                      cart = cart.filter(
-                        (item) => item.productid != e.target.id
-                      );
-                      counter[e.target.id] = false;
-                      setSession({ cart, counter });
+                      let check = false;
+                      for (let item of session.cart) {
+                        if (item.productid === e.target.id && !check)
+                          check = true;
+                        else cart.push(item);
+                      }
+                      setSession({ cart });
                       window.sessionStorage.setItem(
                         "cart",
                         JSON.stringify(cart)
-                      );
-                      window.sessionStorage.setItem(
-                        "counter",
-                        JSON.stringify(counter)
                       );
                     }}
                   >
@@ -82,16 +116,26 @@ export default function Cart() {
               <div key={cart.id}>
                 <div>{cart.productDescription.name}</div>
                 <img
+                  className="imgsize"
                   src={cart.productDescription.url}
                   alt={cart.productDescription.name}
                 />
                 <div>{cart.productDescription.price}</div>
+                <button
+                  id={cart.productid}
+                  onClick={(e) => {
+                    remove(e.target.id);
+                  }}
+                >
+                  Remove
+                </button>
               </div>
             );
           })}
         </div>
       )}
-      {token && !cart.length && (<>No Items In Cart</>)}
+      <h2>Total Price: {totalPrice.toFixed(2)}</h2>
+      {token && !cart.length && <>No Items In Cart</>}
       {token && cart.length && <button onClick={checkout}>checkout</button>}
       {!token && !session.cart && <>No items</>}
     </>
