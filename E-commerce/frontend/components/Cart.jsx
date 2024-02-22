@@ -13,6 +13,8 @@ export default function Cart() {
   const [createOrder] = useCreateOrderMutation();
 
   const [session, setSession] = useState({ cart: [] });
+  let totalPrice = 0;
+  let cartPrice = [];
 
   useEffect(() => {
     const setCart = () => {
@@ -22,36 +24,35 @@ export default function Cart() {
       setSession(data);
     };
     if (!token && window.sessionStorage.cart) setCart();
-    if (!token) {
-      cartPrice = session.cart;
-      cartPrice.forEach((x) => {
-        totalPrice += Number(x.productprice);
-      });
-    } else {
-      cartPrice = cart;
-      cartPrice.forEach((x) => {
-        totalPrice += Number(x.productDescription.price);
-      });
-    }
+    // if (!token) {
+    //   cartPrice = session.cart;
+    //   cartPrice.forEach((x) => {
+    //     totalPrice += Number(x.productprice);
+    //   });
+    // } else {
+    //   cartPrice = cart;
+    //   cartPrice.forEach((x) => {
+    //     totalPrice += Number(x.productDescription.price);
+    //   });
+    // }
   }, []);
 
   const checkout = async () => {
     await createOrder({ token });
   };
   console.log(cart);
-  let totalPrice = 0;
-  let cartPrice = [];
-  // if (!token) {
-  //   cartPrice = session.cart;
-  //   cartPrice.forEach((x) => {
-  //     totalPrice += Number(x.productprice);
-  //   });
-  // } else {
-  //   cartPrice = cart;
-  //   cartPrice.forEach((x) => {
-  //     totalPrice += Number(x.productDescription.price);
-  //   });
-  // }
+  
+  if (!token) {
+    cartPrice = session.cart;
+    cartPrice.forEach((x) => {
+      totalPrice += Number(x.productprice);
+    });
+  } else {
+    cartPrice = cart;
+    cartPrice.forEach((x) => {
+      totalPrice += Number(x.productDescription.price);
+    });
+  }
 
   const remove = (id) => {
     console.log(id, token);
