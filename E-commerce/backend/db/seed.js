@@ -1,30 +1,31 @@
-// const prismaClient = require("@prisma/client");
-// const prisma = new prismaClient();
-const { Client } = require("pg");
+const { PrismaClient } =require('@prisma/client')
+const prisma = new PrismaClient()
+// const { Client } = require("pg");
 const { product, descriptions, prices, url } = require("./index.js");
 const bcrypt = require("bcrypt");
 
-const client = new Client({
-  connectionString:
-    process.env.DATABASE_URL ||
-    "postgresql://fionazh3ng@localhost:5432/ecommerce",
-  ssl:
-    process.env.NODE_ENV === "production"
-      ? { rejectUnauthorized: false }
-      : undefined,
-});
+// const client = new Client({
+//   connectionString:
+//     process.env.DATABASE_URL ||
+//     "postgresql://fionazh3ng@localhost:5432/ecommerce",
+//   ssl:
+//     process.env.NODE_ENV === "production"
+//       ? { rejectUnauthorized: false }
+//       : undefined,
+// });
 
 async function dropTables() {
   try {
     console.log("Starting to drop tables...");
-    await client.query(`
-        DROP TABLE IF EXISTS cart;
-        DROP TABLE IF EXISTS orderDetails;
-        DROP TABLE IF EXISTS orders;
-        DROP TABLE IF EXISTS products;
-        DROP TABLE IF EXISTS users;
-        
-      `);
+   await prisma.cart.deleteMany()
+   await prisma.orderdetails.deleteMany()
+   await prisma.orders.deleteMany()
+   await prisma.products.deleteMany()
+   await prisma.users.deleteMany()
+
+   await prisma.$executeRaw`ALTER SEQUENCE "orders_id_seq" RESTART WITH 1`;
+   await prisma.$executeRaw`ALTER SEQUENCE "products_id_seq" RESTART WITH 1`;
+   await prisma.$executeRaw`ALTER SEQUENCE "users_id_seq" RESTART WITH 1`;
 
     console.log("Finished dropping tables!");
   } catch (error) {
@@ -32,54 +33,54 @@ async function dropTables() {
   }
 }
 
-async function createTables() {
-  try {
-    console.log("Starting to build tables...");
+// async function createTables() {
+//   try {
+//     console.log("Starting to build tables...");
 
-    await client.query(`
-        CREATE TABLE users (
-          id SERIAL PRIMARY KEY,
-          firstName varchar(255) NOT NULL,
-          lastName varchar(255) NOT NULL,
-          email varchar(255) UNIQUE NOT NULL,
-          password varchar(255) NOT NULL,
-          isAdmin BOOLEAN DEFAULT false
-        );
+//     await client.query(`
+//       //   CREATE TABLE users (
+//       //     id SERIAL PRIMARY KEY,
+//       //     firstName varchar(255) NOT NULL,
+//       //     lastName varchar(255) NOT NULL,
+//       //     email varchar(255) UNIQUE NOT NULL,
+//       //     password varchar(255) NOT NULL,
+//       //     isAdmin BOOLEAN DEFAULT false
+//       //   );
   
-        CREATE TABLE products (
-          id SERIAL PRIMARY KEY,
-          name varchar(255) NOT NULL,
-          url Text NOT NULL,
-          description varchar(255) NOT NULL,
-          price FLOAT NOT NULL
-        );
+//       //   CREATE TABLE products (
+//       //     id SERIAL PRIMARY KEY,
+//       //     name varchar(255) NOT NULL,
+//       //     url Text NOT NULL,
+//       //     description varchar(255) NOT NULL,
+//       //     price FLOAT NOT NULL
+//       //   );
 
-        CREATE TABLE orders (
-            id SERIAL PRIMARY KEY,
-            createdAt date DEFAULT CURRENT_DATE,
-            userId INTEGER REFERENCES users(id)
-          );
+//       //   CREATE TABLE orders (
+//       //       id SERIAL PRIMARY KEY,
+//       //       createdAt date DEFAULT CURRENT_DATE,
+//       //       userId INTEGER REFERENCES users(id)
+//       //     );
 
-          CREATE TABLE orderDetails (
-            id SERIAL PRIMARY KEY,
-            productId INTEGER REFERENCES products(id),
-            orderId INTEGER REFERENCES orders(id)
-          );
+//       //     CREATE TABLE orderDetails (
+//       //       id SERIAL PRIMARY KEY,
+//       //       productId INTEGER REFERENCES products(id),
+//       //       orderId INTEGER REFERENCES orders(id)
+//       //     );
 
-          CREATE TABLE cart (
-            id SERIAL PRIMARY KEY,
-            productId INTEGER REFERENCES products(id),
-            userId INTEGER REFERENCES users(id)
-          );
+//       //     CREATE TABLE cart (
+//       //       id SERIAL PRIMARY KEY,
+//       //       productId INTEGER REFERENCES products(id),
+//       //       userId INTEGER REFERENCES users(id)
+//       //     );
 
-      `);
+//       // `);
 
-    console.log("Finished building tables!");
-  } catch (error) {
-    console.error("Error building tables!");
-    throw error;
-  }
-}
+//     console.log("Finished building tables!");
+//   } catch (error) {
+//     console.error("Error building tables!");
+//     throw error;
+//   }
+// }
 
 async function createInitialUsers() {
   try {
@@ -218,18 +219,15 @@ async function createInitialCart() {
 
 async function createUser({ firstName, lastName, email, password, isAdmin }) {
   try {
-    const {
-      rows: [user],
-    } = await client.query(
-      `
-        INSERT INTO users(firstName, lastName, email, password, isAdmin)
-        VALUES($1, $2, $3, $4, $5) 
-        RETURNING *;
-      `,
-      [firstName, lastName, email, password, isAdmin]
-    );
-
-    return user;
+    await prisma.users.create({
+      data:{
+        firstname:firstName,
+        lastname:lastName,
+        email,
+        password,
+        isadmin:isAdmin
+      }
+  })
   } catch (error) {
     throw error;
   }
@@ -237,18 +235,14 @@ async function createUser({ firstName, lastName, email, password, isAdmin }) {
 
 async function createProduct({ name, url, description, price }) {
   try {
-    const {
-      rows: [product],
-    } = await client.query(
-      `
-        INSERT INTO products("name", "url", description, price)
-        VALUES($1, $2, $3, $4) 
-        RETURNING *;
-      `,
-      [name, url, description, price]
-    );
-
-    return product;
+  await prisma.products.create({
+    data:{
+      name,
+      url,
+      description,
+      price
+    }
+  })
   } catch (error) {
     throw error;
   }
@@ -256,18 +250,12 @@ async function createProduct({ name, url, description, price }) {
 
 async function createOrders({ userId }) {
   try {
-    const {
-      rows: [order],
-    } = await client.query(
-      `
-        INSERT INTO orders(userId)
-        VALUES($1) 
-        RETURNING *;
-      `,
-      [userId]
-    );
+    await prisma.orders.create({
+      data:{
+        userid:userId,
+      }
+    })
 
-    return order;
   } catch (error) {
     throw error;
   }
@@ -275,18 +263,13 @@ async function createOrders({ userId }) {
 
 async function createOrderDetails({ productId, orderId }) {
   try {
-    const {
-      rows: [order],
-    } = await client.query(
-      `
-        INSERT INTO orderDetails(productId, orderId)
-        VALUES($1, $2) 
-        RETURNING *;
-      `,
-      [productId, orderId]
-    );
+   await prisma.orderdetails.create({
+    data:{
+      productid:productId,
+      orderid:orderId
+    }
+   })
 
-    return order;
   } catch (error) {
     throw error;
   }
@@ -294,18 +277,12 @@ async function createOrderDetails({ productId, orderId }) {
 
 async function createCart({ productId, userid }) {
   try {
-    const {
-      rows: [cart],
-    } = await client.query(
-      `
-        INSERT INTO cart(productId, userid)
-        VALUES($1, $2) 
-        RETURNING *;
-      `,
-      [productId, userid]
-    );
-
-    return cart;
+    await prisma.cart.create({
+      data:{
+        productid:productId,
+        userid
+      }
+    })
   } catch (error) {
     throw error;
   }
@@ -313,9 +290,7 @@ async function createCart({ productId, userid }) {
 
 async function rebuildDB() {
   try {
-    client.connect();
     await dropTables();
-    await createTables();
     await createInitialUsers();
     await createInitialProducts();
     await createInitialOrders();
